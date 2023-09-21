@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h2 style="margin-bottom: 25px;"><i class="fas fa-file-alt"></i> {{ incident.title }}</h2>
+            <table class="table table-striped table-responsive"">
+              <tr>
+                <th width="20%"><i class="far fa-calendar-alt"></i> Event Year:</th>
+                <td width="25%">{{ incident.year }}</td>
+                <th width="20%"><i class="fas fa-chart-bar"></i> Reliability:</th>
+                <td width="35%">{{ incident.reliability }}</td>
+              </tr>
+              <tr>
+                <th width="20%"><i class="fas fa-exclamation-circle"></i> Incident Type: </th>
+                <td width="25%">{{ incident.incident_type }}</td>
+                <th width="20%"><i class="fas fa-wrench"></i> Industry Type: </th>
+                <td width="35%">{{ incident.industry_type }}</td>
+              </tr>
+              <tr>
+                <th><i class="far fa-file-alt"></i> Description:</th>
+                <td colspan="3"><p>{{ incident.description }}</p></td>
+              </tr>
+              <tr>
+                <th><i class="fas fa-fire"></i> Impact:</th>
+                <td colspan="3"><p>{{ incident.impact }}</p></td>
+              </tr>
+              <tr>
+                <th><i class="fas fa-indent"></i> Action Description:</th>
+                <td colspan="3">{{ incident.actions_taken }}</td>
+              </tr>
+            </table>
+            <div class="text-muted">
+              <p>Added by
+                <a class="username-link" href="{{ url_for('users.user_incidents', username=incident.author.username) }}">{{ incident.author.username }}</a>
+                on {{ incident.created_date.strftime('%Y-%m-%d') }}</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <p><strong><i class="far fa-calendar"></i> Last Modified Date:</strong> {{ incident.last_modified_date.strftime('%Y-%m-%d') }}</p>
+            <p><strong><i class="far fa-user"></i> Created By:</strong>
+              <a class="username-link" href="{{ url_for('users.user_incidents', username=incident.author.username) }}">{{ incident.author.username }}</a>
+            </p>
+            {% if ( incident.author == current_user and current_user.account_status != AccountStatus.DISABLED) or (incident.author.account_status == AccountStatus.DISABLED and current_user.role == Role.ADMIN) %}
+              <div class="text-right">
+                <a class="btn btn-primary" href="{{ url_for('incidents.update_incident', incident_id=incident.id) }}">
+                  <i class="fas fa-pencil-alt"></i> Update
+                </a>
+                <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash"></i> Delete</button>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel"><i class="fas fa-exclamation-triangle"></i> Are you sure you want to delete this incident?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <form action="{{ url_for('incidents.delete_incident', incident_id=incident.id) }}" method="POST">
+            <button class="btn btn-danger" type="submit"><i class="fas fa-trash"></i> Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+        <strong>Last Updated:</strong> {{ last_updated_date.strftime("%a, %B %d, %Y") }}<p>
+        <table id="myTable" class="table dataTable table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" class="header_color sort">Title</th>
+                    <th scope="col" class="header_color sort">Year</th>
+                    <th scope="col" class="header_color sort">Industry Type</th>
+                    <th scope="col" class="header_color sort">Incident Type</th>
+                    <th scope="col" class="header_color sort">Reliability</th>
+                    <th scope="col" class="header_color no-sort">About</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for incident in incidents %}
+                    <tr>
+                        <td>{{ incident.title }}</td>
+                        <td>{{ incident.year }}</td>
+                        <td>{{ incident.industry_type }}</td>
+                        <td>{{ incident.incident_type }}</td>
+                        <td>{{ incident.reliability }}</td>
+                        <td><a href="{{ url_for('incidents.incident', incident_id=incident.id) }}"><i class="fa fa-search"></i></a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{% endblock content %}

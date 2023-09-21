@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="mb-3">Registered users</h1>
+    <div class="content-section">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="hide_top_border">Username</th>
+                    <th class="hide_top_border">Email</th>
+                    <th class="hide_top_border">Country</th>
+                    <th class="hide_top_border">Account Status</th>
+                    <th class="hide_top_border">Incidents Count</th>
+                    <th class="hide_top_border">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{% if user.country %}{{ user.country }}{% else %}Not Provided{% endif %}</td>
+                        <td>
+                            {% if user.account_status ==  AccountStatus.CONFIRMED %}
+                                Confirmed
+                            {% elif user.account_status == AccountStatus.DISABLED %}
+                                Disabled
+                            {% else %}
+                                Pending
+                            {% endif %}
+                        </td>
+                        <td>{{ user.incidents|length }}</td>
+                        <td>
+                            {% if user.role != Role.ADMIN %}
+                                {% if user.account_status == AccountStatus.CONFIRMED %}
+                                    <button class="btn btn-danger" data-toggle="modal" data-target="#disableUserModal{{ user.id }}">Disable account</button>
+                                {% elif user.account_status == AccountStatus.DISABLED %}
+                                    <button class="btn btn-success" data-toggle="modal" data-target="#activateUserModal{{ user.id }}">Activate account</button>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if users.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('users.user_accounts', page=page_num)}}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('users.user_accounts', page=page_num)}}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+
+    <!-- Disable User Modals -->
+    {% for user in users %}
+        {% if user.account_status == AccountStatus.CONFIRMED %}
+            <div class="modal fade" id="disableUserModal{{ user.id }}" tabindex="-1" role="dialog" aria-labelledby="disableUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="disableUserModalLabel">Disable User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to disable this user?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <a href="{{ url_for('users.disable_user', username=user.username) }}" class="btn btn-danger">Disable</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    <!-- Activate User Modals -->
+    {% for user in users %}
+        {% if user.account_status == AccountStatus.DISABLED %}
+            <div class="modal fade" id="activateUserModal{{ user.id }}" tabindex="-1" role="dialog" aria-labelledby="activateUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="activateUserModalLabel">Activate User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to activate this user?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <a href="{{ url_for('users.activate_user', username=user.username) }}" class="btn btn-success">Activate</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock content %}

@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% if incidents.items|length == 0 %}
+        <div class="content-section">
+            <p>This user has not added any incidents yet.</p>
+        </div>
+    {% else %}
+        <h1 class="mb-3">Incidents added by {{ user.username}}</h1>
+        {% for incident in incidents.items %}
+            <article class="media content-section">
+                <img class="rounded-circle account-img" width="125" height="125" style="object-fit: cover" src="{{ url_for('static', filename='profile_pictures/' + incident.author.profile_picture) }}">
+                <div class="media-body">
+                    <div class="incident-metadata">
+                        <a class="username">{{ incident.author.username }}</a>
+                        <small class="text-muted">{{ incident.created_date.strftime('%Y-%m-%d') }}</small>
+                    </div>
+                    <h2><a class="incident-title" href="{{ url_for('incidents.incident', incident_id=incident.id) }}">{{ incident.title }}</a></h2>
+                    <table class="table">
+                        <tr>
+                            <th><i class="far fa-calendar-alt"></i> Event Year:</th>
+                            <td>{{ incident.year }}</td>
+                            <th><i class="fas fa-chart-bar"></i> Reliability:</th>
+                            <td>{{ incident.reliability }}</td>
+                        </tr>
+                        <tr>
+                            <th><i class="fas fa-exclamation-circle"></i> Incident Type: </th>
+                            <td>{{ incident.incident_type }}</td>
+                            <th><i class="fas fa-wrench"></i> Industry Type: </th>
+                            <td>{{ incident.industry_type }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </article>
+        {% endfor %}
+    {% endif %}
+    {% for page_num in incidents.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if incidents.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('users.user_incidents', username=user.username, page=page_num)}}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('users.user_incidents', username=user.username, page=page_num)}}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+{% endblock content %}
