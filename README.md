@@ -33,12 +33,12 @@ On Windows:
 On macOS and Linux:
 source venv/bin/activate
 
-Setting Up the Database
+## Setting Up the Database
 Create a new database in Microsoft SQL Server.
 
 Update the SQLALCHEMY_DATABASE_URI in the config.py file with the connection string for your database.
 
-Running the Application
+## Running the Application
 Install the required dependencies
 Run the application:
 flask run
