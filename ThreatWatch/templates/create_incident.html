@@ -1,8 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="content-section col-md-10">
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
+        <form id="confirmForm" action="{{ url_for('incidents.new_incident') }}" method="POST">
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">{{ legend }}</legend>
                                 <div class="form-group">
@@ -110,9 +109,30 @@
                     {% endif %}
                 </div>
             </fieldset>
-            <div class="form-group">
+            <div class="form-group" id="confirmAdd">
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
+            {{ form.hidden_tag() }}
         </form>
+    </div>
+    <!-- Similar Incident Modal -->
+    <div class="modal fade" id="similarIncidentModal" tabindex="-1" role="dialog" aria-labelledby="similarIncidentModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="similarIncidentModalLabel"><i class="fas fa-exclamation-triangle"></i> Similar Incident Detected!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    A similar incident already exists in the database. Are you sure you want to add this?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelAddIncident">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAddIncident">Add</button>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock content %}

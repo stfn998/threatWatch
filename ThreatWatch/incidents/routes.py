@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, flash, redirect, request, abort
+from flask import Blueprint, render_template, url_for, flash, redirect, request, abort, jsonify
 from flask_login import current_user, login_required
 from datetime import datetime
 from ThreatWatch import db
@@ -18,7 +18,15 @@ incidents = Blueprint('incidents', __name__)
 def new_incident():
     # Create a new IncidentForm instance
     form = IncidentForm()
+    force_add = request.form.get('force_add', type=bool, default=False)
     if form.validate_on_submit():
+        if not force_add:
+            # Check for similar incidents first
+            title_words = set(form.title.data.split())
+            similar_incidents = Incident.query.filter_by(year=form.year.data, industry_type=form.industry_type.data, incident_type=form.incident_type.data).all()
+            for inc in similar_incidents:
+                if len(title_words.intersection(set(inc.title.split()))) / len(title_words) >= 0.5:
+                    return jsonify(status='similar')
         # Create a new Incident instance and populate its attributes from the form data
         incident = Incident(
             title = form.title.data,
@@ -36,7 +44,7 @@ def new_incident():
         db.session.add(incident)
         db.session.commit()
         flash('Your incident has been created.', 'success')
-        return redirect(url_for('main.home'))
+        return jsonify(status='added')
     # Render the template for creating a new incident
     return render_template('create_incident.html', title='New Incident', form = form, legend='New Incident')
 
