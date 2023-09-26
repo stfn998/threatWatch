@@ -39,8 +39,7 @@ Create a new database in Microsoft SQL Server.
 Update the SQLALCHEMY_DATABASE_URI in the config.py file with the connection string for your database.
 
 ## Running the Application
-Install the required dependencies
-Run the application:
-flask run
+Install the required dependencies: pip install -r requirements.txt
+Run the application: flask run
 
 Open your web browser and go to http://localhost:5000 to access Threat Watch.

@@ -1,0 +1,12 @@
+Flask==2.1.4
+Flask-Bcrypt==0.7.1
+Flask-Login==0.5.3
+Flask-Mail==0.9.1
+Flask-Migrate==3.1.0
+Flask-SQLAlchemy==2.5.1
+Pillow==8.3.1
+SQLAlchemy==1.4.25
+country-list==0.2.10
+enum34==1.1.10
+itsdangerous==2.1.0
+python-dateutil==2.8.2
